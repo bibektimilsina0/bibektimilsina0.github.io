@@ -21,21 +21,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1️⃣ Setup Node (NO pnpm cache yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "pnpm"
 
-      - name: Enable pnpm (corepack)
-        run: corepack enable
+      # 2️⃣ Enable pnpm via corepack (THIS IS REQUIRED)
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9 --activate
+          pnpm --version
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Next.js
+      # 4️⃣ Build Next.js (static export)
+      - name: Build
         run: pnpm build
 
+      # 5️⃣ Upload Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
